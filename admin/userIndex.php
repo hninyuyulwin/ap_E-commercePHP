@@ -55,7 +55,7 @@
                       }else{
                         $pageno = 1;
                       }
-                      $numOfrecs = 2;
+                      $numOfrecs = 5;
                       $offset = ($pageno - 1)*$numOfrecs; 
 
                       if (empty($_POST['search']) && empty($_COOKIE['search'])) {
@@ -94,8 +94,8 @@
                       <td><?php echo escape($value['name']); ?></td>
                       <td><?php echo escape($value['email']);?> </td>
                       <td><?php echo escape($value['phone']);?> </td>
-                      <td><?php echo $value['password'];?> </td>
-                      <td><?php echo $value['address'];?> </td>
+                      <td><?php echo escape(substr($value['password'],0,10));?> </td>
+                      <td><?php echo escape($value['address']);?> </td>
                       <td><?php echo $value['role'] == 1 ? 'admin' : 'user';?> </td>
                       <td>
                         <div class="btn btn-group">

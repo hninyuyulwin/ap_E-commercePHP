@@ -30,7 +30,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="index3.html" class="nav-link">Home</a>
+        <a href="index.php" class="nav-link">Home</a>
       </li>
     </ul>
 
@@ -40,25 +40,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
       $link_array = explode('/', $link);
       $page = end($link_array);
     ?>
-    <form class="form-inline ml-3" method="post"
-      <?php if($page == 'index.php'): ?>
-        action="index.php"
-      <?php elseif($page == 'category.php'): ?>
-        action="category.php"
-      <?php elseif($page == 'userIndex.php'): ?>
-        action="userIndex.php"
-      <?php endif; ?>
-    >
-      <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
-      <div class="input-group input-group-sm">
-        <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-        <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
-            <i class="fas fa-search"></i>
-          </button>
+    <?php if ($page != 'order_list.php') { ?>
+      <form class="form-inline ml-3" method="post"
+        <?php if($page == 'index.php'): ?>
+          action="index.php"
+        <?php elseif($page == 'category.php'): ?>
+          action="category.php"
+        <?php elseif($page == 'userIndex.php'): ?>
+          action="userIndex.php"
+        <?php endif; ?>
+        >
+        <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+        <div class="input-group input-group-sm">
+          <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-navbar" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    <?php } ?>
+    
 
     <!-- Right navbar links -->
     
@@ -68,10 +71,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <a href="index.php" class="brand-link">
       <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
            style="opacity: .8">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+      <span class="brand-text font-weight-light">Shopping Site</span>
     </a>
 
     <!-- Sidebar -->
@@ -112,6 +115,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <i class="nav-icon fas fa-user-plus"></i>
               <p>
                 User
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="order_list.php" class="nav-link">
+              <i class="nav-icon fas fa-table"></i>
+              <p>
+                Order
               </p>
             </a>
           </li>

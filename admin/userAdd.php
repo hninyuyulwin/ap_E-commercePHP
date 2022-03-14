@@ -11,7 +11,7 @@
   }
   
   if ($_POST) {
-    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password'])< 4) {
+    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password'])< 4 || empty($_POST['phone']) || empty($_POST['address']) ) {
       if (empty($_POST['name'])) {
         $nameError = "Name field cannot be null.";
       }
@@ -24,11 +24,19 @@
       else if (strlen($_POST['password']) < 4) {
         $passwordError = "Password must be more than 4 characters.";
       }
+      if (empty($_POST['phone'])) {
+        $phoneError = "Phone field cannot be null.";
+      }
+      if (empty($_POST['address'])) {
+        $addressError = "Address field cannot be null.";
+      }
     }
     else{
       $name = $_POST['name'];
       $email = $_POST['email'];
       $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+      $phone = $_POST['phone'];
+      $address = $_POST['address'];
 
       if (empty($_POST['role'])) {
         $role = 0;
@@ -45,9 +53,9 @@
         echo "<script>alert('Email Duplicated.');</script>";
       }
       else{
-        $sql = "INSERT INTO users(name, email, password, role) VALUES (:name,:email,:password,:role)";
+        $sql = "INSERT INTO users(name, email,phone, password,address, role) VALUES (:name,:email,:phone,:password,:address,:role)";
         $pdoStatement = $pdo->prepare($sql);
-        $result = $pdoStatement->execute(array(':name'=>$name,':email'=>$email,':password'=>$password,':role'=>$role));
+        $result = $pdoStatement->execute(array(':name'=>$name,':email'=>$email,':phone'=>$phone,':password'=>$password,':address'=>$address,':role'=>$role));
         if ($result) {
         echo "<script>alert('Post Created Success');window.location.href='userIndex.php';</script>";
         }
@@ -85,9 +93,19 @@
                     <input type="email" name="email" class="form-control" placeholder="Enter E-mail" >
                   </div>
                   <div class="form-group">
+                    <label for="">Phone</label>
+                    <p style="color:red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
+                    <input type="number" name="phone" class="form-control" placeholder="Enter Phone Number" >
+                  </div>
+                  <div class="form-group">
                     <label for="">Password</label>
                     <p style="color:red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
                     <input type="password" name="password" class="form-control" placeholder="Enter Password" >
+                  </div>
+                  <div class="form-group">
+                    <label for="">Address</label>
+                    <p style="color:red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
+                    <input type="text" name="address" class="form-control" placeholder="Enter Address" >
                   </div>
                   <div class="form-group">
                     <label for="">Admin</label><br>
