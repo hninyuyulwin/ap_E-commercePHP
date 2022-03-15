@@ -83,7 +83,7 @@
 
                         $sql = "SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numofrecs";
                         $stmt = $pdo->prepare($sql);
-                        $stmt->execute();
+                        $stmt->execute(); 
                         $result = $stmt->fetchAll();
                       }                     
 
