@@ -11,7 +11,7 @@
   }
   
   if ($_POST) {
-    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password'])< 4) {
+    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password'])< 4 || empty($_POST['phone']) || empty($_POST['address']) ) {
       if (empty($_POST['name'])) {
         $nameError = "Name field cannot be null.";
       }
@@ -21,48 +21,52 @@
       if (empty($_POST['password'])) {
         $passwordError = "Password field cannot be null.";
       }
-      if (strlen($_POST['password']) < 4) {
+      else if (strlen($_POST['password']) < 4) {
         $passwordError = "Password must be more than 4 characters.";
+      }
+      if (empty($_POST['phone'])) {
+        $phoneError = "Phone field cannot be null.";
+      }
+      if (empty($_POST['address'])) {
+        $addressError = "Address field cannot be null.";
       }
     }
     else{
-      $id = $_POST['id'];
       $name = $_POST['name'];
       $email = $_POST['email'];
-      $password = password_hash($_POST['password'], PASSWORD_DEFAULT) ;
+      $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+      $phone = $_POST['phone'];
+      $address = $_POST['address'];
 
       if (empty($_POST['role'])) {
         $role = 0;
       }else{
         $role = 1;
       }
-
-      // for Email
-      $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
-      $stmt->execute(array(':email'=>$email,':id'=>$id));
+      $sql = "SELECT * FROM users WHERE email=:email AND id!=:id";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute([':email'=>$email,':id'=>$id]);
       $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
       if ($user) {
         echo "<script>alert('Email Duplicated.');</script>";
       }
       else{
-        if ($password != null) {
-          $pdostmt = $pdo->prepare("UPDATE users SET name='$name',email='$email',password='$password',role=$role WHERE id=$id");
+        if (empty($_POST['password'])) {
+          $pdoStatement = $pdo->prepare("UPDATE users SET name=:name, email=:email,phone=:phone ,address=:address, role=:role WHERE id=".$_GET['id']);
+        }else{
+          $pdoStatement = $pdo->prepare("UPDATE users SET name=:name, email=:email,phone=:phone,password=:password ,address=:address, role=:role WHERE id=".$_GET['id']);
         }
-        else{
-          $pdostmt = $pdo->prepare("UPDATE users SET name='$name',email='$email',role=$role WHERE id=$id");
-        }
-        $result = $pdostmt->execute();
+        $result = $pdoStatement->execute(array(':name'=>$name,':email'=>$email,':phone'=>$phone,':password'=>$password,':address'=>$address,':role'=>$role));
         if ($result) {
-          echo "<script>alert('Post Updated Success');window.location.href='userIndex.php';</script>";
-        }       
+        echo "<script>alert('Post Updated Success');window.location.href='userIndex.php';</script>";
+        }
       }
     }
-  }
-
-  $pdoStatement = $pdo->prepare("SELECT * FROM users WHERE id=".$_GET['id']);
-  $pdoStatement->execute();
-  $select = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+    }
+  $stmt = $pdo->prepare("SELECT * FROM users WHERE id=".$_GET['id']);
+  $stmt->execute();
+  $user = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 <?php 
   include_once "header.php";
@@ -83,27 +87,37 @@
               <div class="card-body">
                 <form action="" method="post">
                   <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
-                  <input type="hidden" name="id" value="<?php echo escape($select['id']); ?>">
+                  <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
                   <div class="form-group">
                     <label for="">Name</label>
                     <p style="color:red"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>
-                    <input value="<?php echo escape($select['name']); ?>" type="text" name="name" class="form-control" placeholder="Enter Name">
+                    <input value="<?php echo $user['name']; ?>" type="text" name="name" class="form-control" placeholder="Enter Name">
                   </div>
                   <div class="form-group">
                     <label for="">E-mail</label>
                     <p style="color:red"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
-                    <input value="<?php echo escape($select['email']); ?>" type="email" name="email" class="form-control" placeholder="Enter E-mail" >
+                    <input value="<?php echo $user['email']; ?>" type="email" name="email" class="form-control" placeholder="Enter E-mail" >
+                  </div>
+                  <div class="form-group">
+                    <label for="">Phone</label>
+                    <p style="color:red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
+                    <input value="<?php echo $user['phone']; ?>" type="number" name="phone" class="form-control" placeholder="Enter Phone Number" >
                   </div>
                   <div class="form-group">
                     <label for="">Password</label>
                     <p style="color:red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
-                    <input value="<?php echo $select['password']; ?>" type="password" name="password" class="form-control" placeholder="Enter Password" >
+                    <input value="<?php echo $user['password']; ?>" type="password" name="password" class="form-control" placeholder="Enter Password" >
+                  </div>
+                  <div class="form-group">
+                    <label for="">Address</label>
+                    <p style="color:red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
+                    <input value="<?php echo $user['address']; ?>" type="text" name="address" class="form-control" placeholder="Enter Address" >
                   </div>
                   <div class="form-group">
                     <label for="">Admin</label><br>
-                    <input type="checkbox" name="role" value="1" <?php echo $select['role']==1 ? 'checked' : ''; ?>>
+                    <input type="checkbox" name="role">
                   </div>
-                  <input type="submit" name="button" class="btn btn-warning" value="Update User">
+                  <input type="submit" name="button" class="btn btn-success" value="Add User">
                 </form>
               </div>
               <!-- /.card-body -->

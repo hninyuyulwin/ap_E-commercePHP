@@ -3,19 +3,16 @@
   require_once "../config/config.php";
   require_once "../config/common.php";
 
-  if (empty($_SESSION['user_id'] && $_SESSION['logged_in'])) {
+  if (empty($_SESSION['user_id'] && $_SESSION['logged_in']) && $_SESSION['role'] != 1) {
     header('location:login.php');
   }  
-  if($_SESSION['role'] != 1) {
-    header('location:login.php');
-  }
   if (isset($_POST['search'])) {
     setcookie('search', $_POST['search'], time() + (86400 * 30), "/"); // 86400 = 1 day
   }else{
     if (empty($_GET['pageno'])) {
       unset($_COOKIE['search']); 
       setcookie('search', null, -1, '/'); 
-    }    
+    }   
   }
 ?>
 <?php 

@@ -6,6 +6,9 @@
   if (empty($_SESSION['user_id'] && $_SESSION['logged_in'])) {
     header('location:login.php');
   } 
+  if ($_SESSION['role'] != 1) {
+    header('location:../login.php');
+  }
 ?>
 <?php 
   include_once "header.php";
