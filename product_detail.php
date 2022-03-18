@@ -1,5 +1,9 @@
 <?php 
   include('header.php');
+
+   if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
+        header('location:login.php');
+    }
 ?>
 <!--================Single Product Area =================-->
 <div class="product_image_area">
@@ -38,10 +42,10 @@
             <li><a href="#"><span>Availibility</span> : <?php echo $res['quantity']; ?></a></li>
           </ul>
           <p><?php echo $res['description']; ?></p>
-            <form method="post" action="add_to_cart.php">
-              <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
-              <input type="hidden" name="id" value="<?php echo $res['id']; ?>">
-              <div class="product_count">
+          <form action="addtocart.php" method="post">
+            <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
+            <input type="hidden" name="id" value="<?php echo $res['id']; ?>">
+            <div class="product_count">
               <label for="qty">Quantity:</label>
               <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:" class="input-text qty">
               <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
@@ -50,9 +54,10 @@
                class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
             </div>
             <div class="card_area d-flex align-items-center">
-              <button type="submit" class="primary-btn" style="border:none;" >Add to Cart</button>
+              <button type="submit" class="primary-btn" style="border: none;">Add to Cart</button>
             </div>
-            </form>
+          </form>
+            
         </div>
       </div>
     </div>

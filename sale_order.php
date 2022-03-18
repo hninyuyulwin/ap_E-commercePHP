@@ -1,49 +1,48 @@
 <?php 
-session_start();
+	session_start();
 
-require_once "config/config.php";
-require_once "config/common.php";
+	require_once "config/config.php";
+	require_once "config/common.php";
 
-if (isset($_SESSION['cart'])) {
-	$userId = $_SESSION['user_id'];
+	if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
+        header('location:login.php');
+    }
 
-$total = 0;
-foreach ($_SESSION['cart'] as $key => $qty) {
-	$id = str_replace('id','',$key);
+	if (isset($_SESSION['cart'])) {
+		$userId = $_SESSION['user_id'];
 
-	$stmt = $pdo->prepare("SELECT * FROM products WHERE id=".$id);
-	$stmt->execute();
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	$total = $result['price'] * $qty;
-}
-// insert into sale_orders table
-$sostmt = $pdo->prepare("INSERT INTO sale_orders(user_id,total_price,order_date) VALUES (:userid,:totalprice,:orderdate)");
-$soRes = $sostmt->execute([':userid'=>$userId,':totalprice'=>$total,':orderdate'=>date('Y-m-d H:i:s')]);
-if ($soRes) {
-	// insert into sale_orders_details
-	$soid = $pdo->lastInsertId(); // == $soRes['id'];
+		$total = 0;
 
-		foreach ($_SESSION['cart'] as $key => $qty) {//ဘာလို့ loop ထပ်ပတ်လဲဆို productId ၂ခုပါရင်၂ကြောင်း၀င်သွားမယ်
+		foreach ($_SESSION['cart'] as $key => $qty) {
 			$id = str_replace('id','',$key);
-
-			$sodstmt = $pdo->prepare("INSERT INTO sale_orders_details(sale_orders_id, product_id, quantity) VALUES (:soid,:pdid,:qty)");
-			$sodstmt->execute([
-				':soid'=>$soid,':pdid'=>$id,':qty'=>$qty
-			]);
-
-			$qtyStmt = $pdo->prepare("SELECT quantity FROM products WHERE id=".$id);
-			$qtyStmt->execute();
-			$qtyRes = $qtyStmt->fetch(PDO::FETCH_ASSOC);
-
-			$updQty = $qtyRes['quantity'] - $qty;
-
-			// update the quantity value in db
-			$upstmt = $pdo->prepare("UPDATE products SET quantity=:quantity WHERE id=:pid");
-			$result = $upstmt->execute([':quantity'=>$updQty,':pid'=>$id]);
+			$stmt = $pdo->prepare("SELECT * FROM products WHERE id=".$id);
+			$stmt->execute();
+			$res = $stmt->fetch(PDO::FETCH_ASSOC);
+			$total += $res['price'] * $qty;
 		}
-		unset($_SESSION['cart']);		
+		$stmt = $pdo->prepare("INSERT INTO sale_orders(user_id,total_price,order_date) VALUES (:userid,:total,:odate)");
+		$result = $stmt->execute([':userid'=>$userId,':total'=>$total,':odate'=>date('Y-m-d H:i:s')]);
+		if ($result) {
+			$saleorderId = $pdo->lastInsertId();
+
+			foreach ($_SESSION['cart'] as $key => $qty) {
+				$id = str_replace('id','',$key);
+
+				$stmt = $pdo->prepare("INSERT INTO sale_orders_details(sale_orders_id,product_id,quantity) VALUES (:saleid,:productid,:qty)");
+				$result = $stmt->execute([':saleid'=>$saleorderId,':productid'=>$id,':qty'=>$qty]);
+
+				$qtystmt = $pdo->prepare("SELECT quantity FROM products WHERE id=".$id);
+				$qtystmt->execute();
+				$qtyRes = $qtystmt->fetch(PDO::FETCH_ASSOC);
+
+				$updqty = $qtyRes['quantity'] - $qty;
+
+				$updstmt = $pdo->prepare("UPDATE products SET quantity=:quantity WHERE id=:id");
+				$updstmt->execute([':quantity'=>$updqty,':id'=>$id]);
+			}
+			unset($_SESSION['cart']);
+		}
 	}
-}
 ?>
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
@@ -85,7 +84,7 @@ if ($soRes) {
 			<nav class="navbar navbar-expand-lg navbar-light main_box">
 				<div class="container">
 					<!-- Brand and toggle get grouped for better mobile display -->
-					<a class="navbar-brand logo_h" href="index.php"><h4>AP Shopping<h4></a>
+					<a class="navbar-brand logo_h" href="index.html"><h4>AP Shopping<h4></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 					 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="icon-bar"></span>
@@ -134,13 +133,11 @@ if ($soRes) {
 	<!--================Order Details Area =================-->
 	<section class="order_details section_gap">
 		<div class="container">
-			<h3 class="title_confirmation">Thank you. Your order has been received.</h3>	
-			<a class="title_confirmation" href="clearall.php">
-				<h5>Go Back to home page?</h5>
-			</a>		
+			<h3 class="title_confirmation">Thank you. Your order has been received.</h3><hr><br>
+			<a href="clearall.php"><h4 class="title_confirmation">Go Back to Home Page?</h4></a>
 		</div>
 	</section>
 	<!--================End Order Details Area =================-->
 
 	<!-- start footer Area -->
-<?php include_once "footer.php"; ?>
+<?php require_once "footer.php"; ?>

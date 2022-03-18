@@ -1,9 +1,14 @@
 <?php 
 	if (session_status() == PHP_SESSION_NONE) {
 		session_start();
-	}	
+	}
+	
 	require_once 'config/config.php';
 	require_once 'config/common.php';
+
+	if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
+        header('location:login.php');
+    }
 ?>
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
@@ -55,17 +60,16 @@
 					<?php 
 						$cart = 0;
 						if (isset($_SESSION['cart'])) {
-							foreach ($_SESSION['cart'] as $key => $value) {
-								$cart += $value;
+							foreach ($_SESSION['cart'] as $key => $qty) {
+								$cart += $qty;
 							}
-						}
+						}							
 					?>
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
 						<ul class="nav navbar-nav navbar-right">
 							<li class="nav-item">
-								<a href="cart.php" class="cart">
-									<span class="ti-bag"><?php echo $cart; ?></span>
+								<a href="cart.php" class="cart"><span class="ti-bag"><?php echo $cart; ?></span>
 								</a>
 							</li>
 							<li class="nav-item">
@@ -95,18 +99,15 @@
 	<!-- End Header Area -->
 
 	<!-- Start Banner Area -->
-	<section class="banner-area organic-breadcrumb mb-0">
+	<section class="banner-area organic-breadcrumb">
 		<div class="container">
 			<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
 				<div class="col-first">
 					<h1>Welcome</h1>
-					<?php if (isset($_SESSION['username'])) {
-					?>
-						<h3 class="text-white" style="font-style: italic;">
-							<?php echo $_SESSION['username']; ?>
-						</h3>
-					<?php
-					} ?>
+					<?php if (isset($_SESSION['username'])): ?>
+						<h3 class="text-white" style="font-style: italic;"><?php echo $_SESSION['username']; ?></h3>
+					<?php endif ?>		
+					<a href="logout.php" class="btn btn-sm btn-warning">Logout</a>			
 				</div>
 			</div>
 		</div>

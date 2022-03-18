@@ -5,7 +5,7 @@
 	require_once 'config/config.php';
 	require_once 'config/common.php';
 
-	if (empty($_SESSION['user_id']) || empty($_SESSION['logged_in'])) {
+	if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
 		header('location:login.php');
 	}
 	if (isset($_POST['search'])) {
@@ -41,14 +41,14 @@
 			$result = $stmt->fetchAll();
 		}
 		else{
-			$sql = "SELECT * FROM products where quantity > 0 ORDER BY id DESC";
+			$sql = "SELECT * FROM products WHERE quantity > 0 ORDER BY id DESC";
 			$stmt = $pdo->prepare($sql);
 			$stmt->execute();
 			$rawResult = $stmt->fetchAll();
 
 			$total_pages = ceil(count($rawResult)/$numOfrecs);	
 
-			$sql = "SELECT * FROM products where quantity > 0 ORDER BY id DESC limit $offset,$numOfrecs";
+			$sql = "SELECT * FROM products WHERE quantity > 0 ORDER BY id DESC limit $offset,$numOfrecs";
 			$stmt = $pdo->prepare($sql);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
@@ -119,36 +119,36 @@
 				if ($result) {
 					foreach ($result as $value) {
 			?>
-			<div class="col-lg-4 col-md-6">
+				<div class="col-lg-4 col-md-6">
 				<div class="single-product">
 					<a href="product_detail.php?id=<?php echo $value['id']; ?>">
 						<img class="" src="images/<?php echo escape($value['image']); ?>" height="200">
 					</a>
-					<div class="product-details">
+					<div class="product-details">				
 						<h6><?php echo escape($value['name']); ?></h6>
 						<div class="price">
 							<h6><?php echo escape($value['price'])." MMK"; ?></h6>
-						</div>						
-						<div class="prd-bottom">
-						<form action="add_to_cart.php" method="post">
+						</div>
+						<div class="prd-bottom" >
+						<form action="addtocart.php" method="post">
 						<input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
 						<input type="hidden" name="id" value="<?php echo $value['id']; ?>">
 						<input type="hidden" name="qty" value="1">
 							<div class="social-info">
 								<button type="submit" style="display:contents;">
 									<span class="ti-bag"></span>
-									<p class="hover-text" style="left:20px;">add to bag</p>
+									<p class="hover-text" style="left: 20px;">add to bag</p>
 								</button>
-							</div>
+							</div>							
 							<a href="product_detail.php?id=<?php echo $value['id']; ?>" class="social-info">
 								<span class="lnr lnr-move"></span>
 								<p class="hover-text">view more</p>
-							</a>
+							</a>							
+						</form>
 						</div>
-						</form>							
 					</div>
-				</div>		
-			</div>
+					</div>		
+				</div>
 			<?php
 					}
 				}
