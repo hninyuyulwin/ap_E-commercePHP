@@ -21,14 +21,14 @@
       if (empty($_POST['price'])) {
         $priceError = "Price Field Required!";
       }
-      else if(is_int($_POST['price']) != 1){
-        $qtyError = "Price value must be number";
+      else if(is_numeric($_POST['price']) != 1){
+        $priceError = "Price value must be number";
       }
       if (empty($_POST['quantity'])) {
         $quantityError = "Quantity Field Required!";
       }
-      else if(is_int($_POST['quantity']) != 1){
-        $qtyError = "Quantity value must be number";
+      else if(is_numeric($_POST['quantity']) != 1){
+        $quantityError = "Quantity value must be number";
       }
       if (empty($_POST['category'])) {
         $categoryError = "Category Field Required!";
@@ -37,28 +37,36 @@
         $imageError = "Image Field Required!";
       }
     }else{
-      $img = $_FILES['image']['name'];
-      $file = "../images/".$img;
-      $fileName = $_FILES['image']['tmp_name'];
-      $imgType = pathinfo($file,PATHINFO_EXTENSION);
-      if ($imgType != 'jpg' && $imgType != 'png' && $imgType != 'jpeg') {
-        echo "<script>alert('Image type must be jpg or png or jpeg.');</script>";
-      }else{
-        $name = $_POST['name'];
-        $description = $_POST['description'];
-        $price = $_POST['price'];
-        $quantity = $_POST['quantity'];
-        $category_id = $_POST['category'];
-        $image = $img;
-        move_uploaded_file($fileName, $file);
-
-        $sql = "INSERT INTO products(name,description,price,quantity,category_id, image) VALUES (:name,:description,:price,:quantity,:category_id,:image)";
-        $stmt = $pdo->prepare($sql);
-        $result = $stmt->execute(array(':name'=>$name,':description'=>$description,':price'=>$price,':quantity'=>$quantity,':category_id'=>$category_id,':image'=>$image));
-        if ($result) {
-          echo "<script>alert('Post Creatded Success!');window.location.href='index.php';</script>";
-        }
+      if (is_numeric($_POST['price']) != 1) {
+        $priceError = "Price value must be number!";
       }
+      if (is_numeric($_POST['quantity']) != 1) {
+        $quantityError = "Quantity value must be number!";
+      }
+        if (empty($quantityError) && empty($priceError)) {
+          $img = $_FILES['image']['name'];
+          $file = "../images/".$img;
+          $fileName = $_FILES['image']['tmp_name'];
+          $imgType = pathinfo($file,PATHINFO_EXTENSION);
+          if ($imgType != 'jpg' && $imgType != 'png' && $imgType != 'jpeg') {
+            echo "<script>alert('Image type must be jpg or png or jpeg.');</script>";
+          }else{
+            $name = $_POST['name'];
+            $description = $_POST['description'];
+            $price = $_POST['price'];
+            $quantity = $_POST['quantity'];
+            $category_id = $_POST['category'];
+            $image = $img;
+            move_uploaded_file($fileName, $file);
+
+            $sql = "INSERT INTO products(name,description,price,quantity,category_id, image) VALUES (:name,:description,:price,:quantity,:category_id,:image)";
+            $stmt = $pdo->prepare($sql);
+            $result = $stmt->execute(array(':name'=>$name,':description'=>$description,':price'=>$price,':quantity'=>$quantity,':category_id'=>$category_id,':image'=>$image));
+            if ($result) {
+              echo "<script>alert('Post Creatded Success!');window.location.href='index.php';</script>";
+            }
+          }
+        }
     }
   }
 ?>

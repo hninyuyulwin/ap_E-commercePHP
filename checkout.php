@@ -105,25 +105,25 @@
                                 <li>
                                     <a href="#">Product <span>Total</span></a>
                                 </li>                            
-                        <?php 
-                            $total = 0;
-                            foreach ($_SESSION['cart'] as $key => $qty) {
-                                $id = str_replace('id','',$key);
+                            <?php 
+                                $total = 0;
+                                foreach ($_SESSION['cart'] as $key => $qty) {
+                                    $id = str_replace('id','',$key);
 
-                                $stmt = $pdo->prepare("SELECT * FROM products WHERE id=".$id);
-                                $stmt->execute();
-                                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                                $total += $result['price'] * $qty;
-                        ?>
+                                    $stmt = $pdo->prepare("SELECT * FROM products WHERE id=".$id);
+                                    $stmt->execute();
+                                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    $total += $result['price'] * $qty;
+                            ?>
                                 <li>
                                     <a href="#"><?php echo $result['name']; ?>
                                         <span class="middle">x <?php echo $qty; ?></span>
                                         <span class="last"><?php echo $result['price'] * $qty ." MMK"; ?></span>
                                     </a>
                                 </li>
-                        <?php
-                            }
-                        ?>
+                            <?php
+                                }
+                            ?>
                             </ul>
                             <ul class="list list_2">
                                 <li><a href="#">Total <span><?php echo $total." MMK"; ?></span></a></li>

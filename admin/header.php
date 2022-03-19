@@ -18,6 +18,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- Data Table -->  
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -41,7 +43,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       $page = end($link_array);
     ?>
     <?php if($page == 'index.php' ||$page == 'category.php' ||$page == 'userIndex.php'){ ?> 
-      <?php if ($page != 'order_list.php') { ?>
+      <?php if ($page != 'order_list.php' && $page != 'weekly_report.php' && $page != 'monthly_report.php' && $page != 'loyal_customer.php' && $page != 'best_seller.php') { ?>
         <form class="form-inline ml-3" method="post"
           <?php if($page == 'index.php'): ?>
             action="index.php"
@@ -88,7 +90,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block"><?php echo $_SESSION['username'];?></a>
+          <a href="index.php" class="d-block"><?php echo $_SESSION['username'];?></a>
         </div>
       </div>
 
@@ -128,6 +130,41 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 Order
               </p>
             </a>
+          </li>
+          <li class="nav-item has-treeview menu">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Reports
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="weekly_report.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Weekly Reports</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="monthly_report.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Monthly Reports</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="loyal_customer.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Loyal Customers</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="best_seller.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Best Seller Items</p>
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>
