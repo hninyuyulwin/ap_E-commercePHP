@@ -28,17 +28,14 @@
                   <thead>                  
                     <tr>
                       <th>ID</th>
-                      <th>User</th>
-                      <th>Total Amount</th>
-                      <th>Order Date</th>
+                      <th>Product Name</th>
                     </tr>
                   </thead>
                   <tbody>
                   <?php 
-                      $price = 300000;
-                      $sql = "SELECT * FROM sale_orders_details WHERE product_id > :price ORDER BY id DESC";
+                      $sql = "SELECT * FROM sale_orders_details GROUP BY product_id HAVING SUM(quantity)>2";
                       $stmt = $pdo->prepare($sql);
-                      $stmt->execute([':price'=>$price]);
+                      $stmt->execute();
                       $result = $stmt->fetchAll();
 
                       if ($result) {
@@ -52,8 +49,6 @@
                     <tr>
                       <td><?php echo escape($i); ?></td>
                       <td><?php echo escape($pResult['name']); ?></td>
-                      <td><?php echo escape($value['total_price']); ?></td>
-                      <td><?php echo escape(date('d-m-Y',strtotime($value['order_date']))); ?></td>
                     </tr>
                     <?php
                       $i++;
